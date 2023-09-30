@@ -18,10 +18,10 @@ class Speech2Txt:
         print("Waiting...")
         blockPrint()
         with sr.Microphone() as source:
-            enablePrint()
             self.recognizer.pause_threshold = 0.5
             audio = self.recognizer.listen(source)
             text = ""
+            enablePrint()
             try:
                 text = self.recognizer.recognize_google(audio)
                 print(text)
@@ -40,10 +40,10 @@ class Speech2Txt:
     def record_question(self) -> str:
         blockPrint()
         with sr.Microphone() as source:
-            enablePrint()
             self.recognizer.pause_threshold = 0.5
             audio = self.recognizer.listen(source)
             text = ""
+            enablePrint()
             try:
                 text = self.recognizer.recognize_google(audio)
                 print(text)

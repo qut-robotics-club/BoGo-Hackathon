@@ -44,6 +44,8 @@ class ChatGPT:
             "character": data["character"],
             "sentiment": data["sentiment"]
         }
+        if not data["requiresReply"]:
+            self.messages = [ {"role": "system", "content": self.openingContext} ]
         return result
     
     def instruct(self) -> dict:
