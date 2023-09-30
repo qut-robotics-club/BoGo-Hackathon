@@ -3,3 +3,5 @@ openai
 pydub
 SpeechRecognition
 pyaudio
+pyserial
+python-vlc

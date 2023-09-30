@@ -10,7 +10,7 @@ class ChatGPT:
         self.messages = [ {"role": "system", "content": self.openingContext} ]
 
         self.model = "gpt-4"
-        self.instructModel = "gpt-3.5-turbo"
+        self.instructModel = "gpt-4"
 
         with open("characters.json", "r") as f:
             self.characters = json.load(f)
@@ -23,7 +23,7 @@ class ChatGPT:
             "followup": "From the context, return whether the message requires a reply by the user. Reply only with yes or no."
         }
         
-    def ask(self, question: str) -> dict:
+    def ask(self, question: str, sentiment=True, impersonate=True) -> dict:
 
         self.messages.append(
             {"role": "user", "content": question}
@@ -38,7 +38,7 @@ class ChatGPT:
             {"role": "assistant", "content": answer}
         )
 
-        data = self.instruct()
+        data = self.instruct(sentiment, impersonate)
         result = {
             "answer": answer,
             "requiresReply": data["requiresReply"],
@@ -49,40 +49,46 @@ class ChatGPT:
             self.messages = [ {"role": "system", "content": self.openingContext} ]
         return result
     
-    def instruct(self) -> dict:
+    def instruct(self, doSentiment, doImpersonate) -> dict:
         result = {}
         characterRequest = self.messages
         characterRequest.append(
             {"role": "system", "content": self.instructions["character"]}
         )
 
-        character = openai.ChatCompletion.create(
-            model=self.instructModel,
-            messages=characterRequest
-        )
-        # print(f"Character Instruct: {character.choices[0].message.content}")
-        result["character"] = "default"
-        for char in self.characters.keys():
-            check = character.choices[0].message.content.lower().find(char.lower())
-            if check != -1:
-                result["character"] = char
-                break
+        if doImpersonate:
+            character = openai.ChatCompletion.create(
+                model=self.instructModel,
+                messages=characterRequest
+            )
+            # print(f"Character Instruct: {character.choices[0].message.content}")
+            result["character"] = "default"
+            for char in self.characters.keys():
+                check = character.choices[0].message.content.lower().find(char.lower())
+                if check != -1:
+                    result["character"] = char
+                    break
+        else:
+            result["character"] = "default"
         
         sentimentRequest = self.messages
         sentimentRequest.append(
             {"role": "system", "content": self.instructions["sentiment"]}
         )
-        sentiment = openai.ChatCompletion.create(
-            model=self.instructModel,
-            messages=sentimentRequest
-        )
-        # print(f"Sentiment Instruct: {sentiment.choices[0].message.content}")
-        result["sentiment"] = "neutral"
-        for sent in self.sentiments:
-            check = sentiment.choices[0].message.content.lower().find(sent.lower())
-            if check != -1:
-                result["sentiment"] = sent
-                break
+        if doSentiment:
+            sentiment = openai.ChatCompletion.create(
+                model=self.instructModel,
+                messages=sentimentRequest
+            )
+            # print(f"Sentiment Instruct: {sentiment.choices[0].message.content}")
+            result["sentiment"] = "neutral"
+            for sent in self.sentiments:
+                check = sentiment.choices[0].message.content.lower().find(sent.lower())
+                if check != -1:
+                    result["sentiment"] = sent
+                    break
+        else:
+            result["sentiment"] = "neutral"
 
         followupRequest = self.messages
         followupRequest.append(
