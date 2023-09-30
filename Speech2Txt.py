@@ -1,6 +1,14 @@
 import pydub
 import speech_recognition as sr
 
+def blockPrint() -> None:
+    import os
+    import sys
+    sys.stdout = open(os.devnull, 'w')
+
+def enablePrint() -> None:
+    import sys
+    sys.stdout = sys.__stdout__
 class Speech2Txt:
     def __init__(self) -> None:
         self.wakeup = ["hi bogo", "hey bogo", "bogo", "hey google", "hi google"]
@@ -8,7 +16,9 @@ class Speech2Txt:
 
     def waitUntilWake(self) -> None:
         print("Waiting...")
+        blockPrint()
         with sr.Microphone() as source:
+            enablePrint()
             self.recognizer.pause_threshold = 0.5
             audio = self.recognizer.listen(source)
             text = ""
@@ -28,7 +38,9 @@ class Speech2Txt:
                 self.waitUntilWake()
 
     def record_question(self) -> str:
+        blockPrint()
         with sr.Microphone() as source:
+            enablePrint()
             self.recognizer.pause_threshold = 0.5
             audio = self.recognizer.listen(source)
             text = ""
