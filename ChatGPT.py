@@ -14,7 +14,7 @@ class ChatGPT:
         with open("characters.json", "r") as f:
             self.characters = json.load(f)
 
-        self.sentiments = ["positive", "negative", "neutral"]
+        self.sentiments = ["sad", "happy", "crying", "cheeky", "love", "neutral"]
 
         self.instructions = {
             "character": "From the context, return only the name of the character you are imitating, if there are no characters specified, say default. Reply with only default, or a name of a character in this list:\n" + str(list(self.characters.keys())),
@@ -96,7 +96,3 @@ class ChatGPT:
             result["requiresReply"] = True
         return result
     
-class Speech2Txt:
-    def __init__(self):
-        openai.api_key = GPT_SECRET
-        

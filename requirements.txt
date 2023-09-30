@@ -1,2 +1,5 @@
 requests
 openai
+pydub
+SpeechRecognition
+pyaudio
