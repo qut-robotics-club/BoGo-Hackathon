@@ -10,11 +10,12 @@ class ChatGPT:
         self.messages = [ {"role": "system", "content": self.openingContext} ]
 
         self.model = "gpt-4"
+        self.instructModel = "gpt-3.5-turbo"
 
         with open("characters.json", "r") as f:
             self.characters = json.load(f)
 
-        self.sentiments = ["sad", "happy", "crying", "cheeky", "love", "neutral"]
+        self.sentiments = ["disgust", "fear", "joy", "sadness", "anger", "surprise"]
 
         self.instructions = {
             "character": "From the context, return only the name of the character you are imitating, if there are no characters specified, say default. Reply with only default, or a name of a character in this list:\n" + str(list(self.characters.keys())),
@@ -56,7 +57,7 @@ class ChatGPT:
         )
 
         character = openai.ChatCompletion.create(
-            model=self.model,
+            model=self.instructModel,
             messages=characterRequest
         )
         # print(f"Character Instruct: {character.choices[0].message.content}")
@@ -72,7 +73,7 @@ class ChatGPT:
             {"role": "system", "content": self.instructions["sentiment"]}
         )
         sentiment = openai.ChatCompletion.create(
-            model=self.model,
+            model=self.instructModel,
             messages=sentimentRequest
         )
         # print(f"Sentiment Instruct: {sentiment.choices[0].message.content}")
@@ -88,7 +89,7 @@ class ChatGPT:
             {"role": "system", "content": self.instructions["followup"]}
         )
         followup = openai.ChatCompletion.create(
-            model=self.model,
+            model=self.instructModel,
             messages=followupRequest
         )
         # print(f"Followup Instruct: {followup.choices[0].message.content}")
