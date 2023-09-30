@@ -22,3 +22,10 @@ if __name__ == "__main__":
         answer = chatbot.ask(user_input, False, False)
         speaker.speakPlain(answer["answer"])
         print(f"BoGo: {answer['answer']}")
+        while answer["requiresReply"]:
+            print("waiting for further reply...")
+            print(answer['requiresReply'])
+            user_input = speech.record_question()
+            answer = chatbot.ask(user_input, False, False)
+            speaker.speakPlain(answer["answer"])
+            print(f"BoGo: {answer['answer']}")
