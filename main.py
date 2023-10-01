@@ -18,6 +18,7 @@ if __name__ == "__main__":
     print("Welcome to the chatbot! Type 'quit' to exit.")
     while True:
         speech.waitUntilWake()
+        speaker.wakeup()
         user_input = speech.record_question()
         answer = chatbot.ask(user_input, False, False)
         print("Requesting speech data")
@@ -26,6 +27,7 @@ if __name__ == "__main__":
         print(f"BoGo: {answer['answer']}")
         while answer["requiresReply"]:
             print("waiting for further reply...")
+            speaker.reply()
             print(answer['requiresReply'])
             user_input = speech.record_question()
             answer = chatbot.ask(user_input, False, False)

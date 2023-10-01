@@ -7,6 +7,7 @@ from Authentication import API_KEY
 import urllib.request
 import threading
 import os
+import pyttsx3
 
 
 class Speaker:
@@ -21,6 +22,18 @@ class Speaker:
         self.waitingForResponse = False
         self.waitingThread = threading.Thread(target=self.waiting)
         self.waitingThread.start()
+
+        self.converter = pyttsx3.init()
+
+        self.voices = self.converter.getProperty('voices')
+
+        # Set a voice -- replace 1 with different indices to try different voices
+        self.converter.setProperty('voice', self.voices[1].id) 
+
+        self.converter.setProperty('rate', 200)
+        self.converter.setProperty('volume', 0.8)
+
+
         
     
     def speak(self, text: str, character: str, mood) -> None:
@@ -100,6 +113,11 @@ class Speaker:
             else:
                 print("Error in audio response")
 
+    def speakPlain2(self, text: str) -> None:
+        self.converter.say(text)
+
+        self.converter.runAndWait()
+
     def waiting(self):
         numAudioFiles = len(os.listdir("Idle Chatter"))
         print("Found " + str(numAudioFiles) + " audio files")
@@ -111,10 +129,25 @@ class Speaker:
                 while p.get_state() != vlc.State.Ended:
                     pass
                 self.waitingForResponse = False
-            time.sleep(1)
+            time.sleep(4)
+
+    def wakeup(self):
+        p = vlc.MediaPlayer("wakeup.mp3")
+        p.play()
+        p.audio_set_volume(100)
+        while p.get_state() != vlc.State.Ended:
+            pass
+    
+    def reply(self):
+        p = vlc.MediaPlayer("continue.mp3")
+        p.play()
+        p.audio_set_volume(100)
+        while p.get_state() != vlc.State.Ended:
+            pass
 
 
 if __name__ == "__main__":
     speaker = Speaker()
     speaker.waitingForResponse = True
+    # speaker.speakPlain2("bogo wants some lovin.... please")
     speaker.speakPlain("BoGo suggests using fresh eggs for the best taste! Start by cracking the eggs into a bowl. Please don't get any shell in it! Then, BoGo say whisk away until the yolks and whites are fully combined.Add a small splash of milk if you wish. BoGo reminds you to season with a little salt and pepper.BoGo advises you to preheat a non-stick frying pan over medium heat. Add some butter and let it melt. Pour the beaten eggs into the pan. The key is to cook them gently. Don't rush! BoGo says stir the eggs")
