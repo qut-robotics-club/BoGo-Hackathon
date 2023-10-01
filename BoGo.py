@@ -5,8 +5,9 @@ import time
 class BoGo:
     def __init__(self) -> None:
         self.arduino1 = Arduino("COM7")
+        self.arduino2 = Arduino("COM8")
 
-        self.arduinos = [self.arduino1]
+        self.arduinos = [self.arduino1, self.arduino2]
 
         self.cmdThread = threading.Thread(target=self.sendServoCmd)
         self.cmdThread.start()

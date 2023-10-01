@@ -5,6 +5,8 @@ import vlc
 import time
 from Authentication import API_KEY
 import urllib.request
+import threading
+import os
 
 
 class Speaker:
@@ -15,6 +17,10 @@ class Speaker:
             self.characters = json.load(f)
 
         self.charCode = self.characters['default']
+
+        self.waitingForResponse = False
+        self.waitingThread = threading.Thread(target=self.waiting)
+        self.waitingThread.start()
         
     
     def speak(self, text: str, character: str, mood) -> None:
@@ -73,6 +79,8 @@ class Speaker:
 
         }
 
+        self.waitingForResponse = True
+
         response = requests.post(self.url, headers=self.headers, json=self.payload)
         
         if response.status_code == 201:
@@ -92,6 +100,21 @@ class Speaker:
             else:
                 print("Error in audio response")
 
+    def waiting(self):
+        numAudioFiles = len(os.listdir("Idle Chatter"))
+        print("Found " + str(numAudioFiles) + " audio files")
+        while True:
+            if self.waitingForResponse:
+                p = vlc.MediaPlayer("Idle Chatter/" + str(int(time.time() % numAudioFiles)) + ".wav")
+                p.play()
+                p.audio_set_volume(100)
+                while p.get_state() != vlc.State.Ended:
+                    pass
+                self.waitingForResponse = False
+            time.sleep(1)
+
+
 if __name__ == "__main__":
     speaker = Speaker()
-    speaker.speakPlain("one time, two time, quick time. This is a very long message to test whether the print actually yeilds some valuable info")
+    speaker.waitingForResponse = True
+    speaker.speakPlain("BoGo suggests using fresh eggs for the best taste! Start by cracking the eggs into a bowl. Please don't get any shell in it! Then, BoGo say whisk away until the yolks and whites are fully combined.Add a small splash of milk if you wish. BoGo reminds you to season with a little salt and pepper.BoGo advises you to preheat a non-stick frying pan over medium heat. Add some butter and let it melt. Pour the beaten eggs into the pan. The key is to cook them gently. Don't rush! BoGo says stir the eggs")

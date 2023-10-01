@@ -6,7 +6,7 @@ from time import sleep
 class ChatGPT:
     def __init__(self) -> None:
         openai.api_key = GPT_SECRET
-        self.openingContext = "You are BoGo, the world's first AI animatronic. You only talk in the third person. You do not narrate your actions, only provide dialogue."
+        self.openingContext = "You are BoGo, the world's first AI animatronic. You only talk in the third person. You do not narrate your actions, only provide dialogue. Ensure all responses are strictly under 500 characters"
         self.messages = [ {"role": "system", "content": self.openingContext} ]
 
         self.model = "gpt-4"

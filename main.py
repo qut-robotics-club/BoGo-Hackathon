@@ -20,6 +20,8 @@ if __name__ == "__main__":
         speech.waitUntilWake()
         user_input = speech.record_question()
         answer = chatbot.ask(user_input, False, False)
+        print("Requesting speech data")
+        speaker.waitingForResponse = True
         speaker.speakPlain(answer["answer"])
         print(f"BoGo: {answer['answer']}")
         while answer["requiresReply"]:
@@ -27,5 +29,6 @@ if __name__ == "__main__":
             print(answer['requiresReply'])
             user_input = speech.record_question()
             answer = chatbot.ask(user_input, False, False)
+            print("Requesting speech data")
             speaker.speakPlain(answer["answer"])
             print(f"BoGo: {answer['answer']}")
